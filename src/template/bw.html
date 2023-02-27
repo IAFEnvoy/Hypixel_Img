@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+
+<head>
+    <style>
+        @font-face {
+            font-family: "Minecraftia";
+            src: url("Minecraftia.ttf");
+        }
+
+        body {
+            background: url("./img/bw1.png");
+        }
+
+        .text {
+            font-family: Minecraftia;
+            position: absolute;
+            font-weight: bold;
+            width: 200px;
+            display: inline-block;
+            text-align: center
+        }
+    </style>
+</head>
+
+<body style="width:900px;height:600px">
+    <div style="font-size:15px;font-family:Minecraftia;position:absolute;left:30px;top:40px">${nameFormat}</div>
+    <img src="https://skins.mcstats.com/body/front/${uuid}" style="position:absolute;left:50px;top:80px;height:270px">
+    <div
+        style="position:absolute;left:300px;top:20px;width:490px;height:360px;background-color:rgba(0,0,0,0.5);border-radius:30px;">
+    </div>
+
+    <div class="text" style="font-size:15px;color:orange;left:300px;top:30px;">等级</div>
+    <div class="text" style="font-size:15px;color:orange;left:450px;top:30px;">连胜</div>
+    <div class="text" style="font-size:15px;color:orange;left:600px;top:30px;">硬币</div>
+    <div class="text" style="font-size:20px;color:yellow;left:300px;top:60px;">${data[0]}</div>
+    <div class="text" style="font-size:20px;color:greenyellow;left:450px;top:60px;">${data[1]}</div>
+    <div class="text" style="font-size:20px;color:yellow;left:600px;top:60px;">${data[2]}</div>
+
+    <div class="text" style="font-size:15px;color:orange;left:300px;top:100px;">胜场</div>
+    <div class="text" style="font-size:15px;color:orange;left:450px;top:100px;">W/L</div>
+    <div class="text" style="font-size:15px;color:orange;left:600px;top:100px;">败场</div>
+    <div class="text" style="font-size:20px;color:greenyellow;left:300px;top:130px;">${data[3]}</div>
+    <div class="text" style="font-size:20px;color:yellow;left:450px;top:130px;">${data[4]}</div>
+    <div class="text" style="font-size:20px;color:red;left:600px;top:130px;">${data[5]}</div>
+
+    <div class="text" style="font-size:15px;color:orange;left:300px;top:170px;">击杀</div>
+    <div class="text" style="font-size:15px;color:orange;left:450px;top:170px;">K/D</div>
+    <div class="text" style="font-size:15px;color:orange;left:600px;top:170px;">死亡</div>
+    <div class="text" style="font-size:20px;color:greenyellow;left:300px;top:200px;">${data[6]}</div>
+    <div class="text" style="font-size:20px;color:yellow;left:450px;top:200px;">${data[7]}</div>
+    <div class="text" style="font-size:20px;color:red;left:600px;top:200px;">${data[8]}</div>
+
+    <div class="text" style="font-size:15px;color:orange;left:300px;top:240px;">最终击杀</div>
+    <div class="text" style="font-size:15px;color:orange;left:450px;top:240px;">FKDR</div>
+    <div class="text" style="font-size:15px;color:orange;left:600px;top:240px;">最终死亡</div>
+    <div class="text" style="font-size:20px;color:greenyellow;left:300px;top:270px;">${data[9]}</div>
+    <div class="text" style="font-size:20px;color:yellow;left:450px;top:270px;">${data[10]}</div>
+    <div class="text" style="font-size:20px;color:red;left:600px;top:270px;">${data[11]}</div>
+
+    <div class="text" style="font-size:15px;color:orange;left:300px;top:310px;">破坏床数</div>
+    <div class="text" style="font-size:15px;color:orange;left:450px;top:310px;">BBLR</div>
+    <div class="text" style="font-size:15px;color:orange;left:600px;top:310px;">被破坏床数</div>
+    <div class="text" style="font-size:20px;color:greenyellow;left:300px;top:350px;">${data[12]}</div>
+    <div class="text" style="font-size:20px;color:yellow;left:450px;top:350px;">${data[13]}</div>
+    <div class="text" style="font-size:20px;color:red;left:600px;top:350px;">${data[14]}</div>
+</body>

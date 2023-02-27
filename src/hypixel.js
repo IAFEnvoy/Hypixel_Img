@@ -1,4 +1,4 @@
-const { formatColor, formatColorFromString, formatTime, formatNameString, toDefault } = require('./util');
+const { formatColor, formatColorFromString, formatTime, formatNameString,formatDateTime, toDefault } = require('./util');
 
 //this file contains api to hypixel
 class Hypixel {
@@ -168,7 +168,8 @@ class Hypixel {
         if (type == 'ov')
             return [lvl, api.karma ?? 0, formatNameString(api.userLanguage ?? 'ENGLISH'),
                 api.achievementPoints ?? 0, achievements.general_quest_master ?? 0, achievements.general_challenger ?? 0,
-                api?.giftingMeta?.ranksGiven ?? 0, this.data[name]?.guild?.name ?? '无公会'];
+                api?.giftingMeta?.ranksGiven ?? 0, this.data[name]?.guild?.name ?? '无公会',
+                formatDateTime(api.firstLogin),formatDateTime(api.lastLogin),formatDateTime(api.lastLogout)];
         if (type == 'bw')
             return [formatBwLevel(api.achievements?.bedwars_level ?? 1), bedwar.winstreak ?? 0, bedwar.coins ?? 0,
             bedwar.wins_bedwars ?? 0, ((bedwar.wins_bedwars ?? 0) / (bedwar.losses_bedwars ?? 0)).toFixed(2), bedwar.losses_bedwars ?? 0,

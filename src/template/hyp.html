@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+
+<head>
+    <style>
+        @font-face {
+            font-family: "Minecraftia";
+            src: url("Minecraftia.ttf");
+        }
+
+        body {
+            background: url("./img/ov1.png");
+        }
+
+        .text {
+            font-family: Minecraftia;
+            position: absolute;
+            font-weight: bold;
+            width: 200px;
+            display: inline-block;
+            text-align: center
+        }
+    </style>
+</head>
+
+<body style="width:900px;height:600px">
+    <div style="font-size:15px;font-family:Minecraftia;position:absolute;left:30px;top:40px">${nameFormat}</div>
+    <img src="https://skins.mcstats.com/body/front/${uuid}" style="position:absolute;left:50px;top:80px;height:270px">
+    <div
+        style="position:absolute;left:300px;top:20px;width:490px;height:410px;background-color:rgba(0,0,0,0.5);border-radius:30px;">
+    </div>
+
+    <div class="text" style="font-size:15px;color:red;left:300px;top:30px;">等级</div>
+    <div class="text" style="font-size:15px;color:orange;left:450px;top:30px;">人品</div>
+    <div class="text" style="font-size:15px;color:yellow;left:600px;top:30px;">语言</div>
+    <div class="text" style="font-size:20px;color:white;left:300px;top:60px;">${data[0]}</div>
+    <div class="text" style="font-size:20px;color:white;left:450px;top:60px;">${data[1]}</div>
+    <div class="text" style="font-size:20px;color:white;left:600px;top:60px;">${data[2]}</div>
+
+    <div class="text" style="font-size:15px;color:greenyellow;left:300px;top:120px;">成就点数</div>
+    <div class="text" style="font-size:15px;color:aqua;left:450px;top:120px;">完成任务</div>
+    <div class="text" style="font-size:15px;color:blue;left:600px;top:120px;">完成挑战</div>
+    <div class="text" style="font-size:20px;color:white;left:300px;top:150px;">${data[3]}</div>
+    <div class="text" style="font-size:20px;color:white;left:450px;top:150px;">${data[4]}</div>
+    <div class="text" style="font-size:20px;color:white;left:600px;top:150px;">${data[5]}</div>
+
+    <div class="text" style="font-size:15px;color:red;left:300px;top:200px;">首次登入</div>
+    <div class="text" style="font-size:15px;color:orange;left:300px;top:280px;">上次登入</div>
+    <div class="text" style="font-size:15px;color:yellow;left:300px;top:360px;">上次登出</div>
+    <div class="text" style="font-size:20px;color:white;left:320px;top:230px;width:400px;text-align:left">${data[8]}
+    </div>
+    <div class="text" style="font-size:20px;color:white;left:320px;top:310px;width:400px;text-align:left">${data[9]}
+    </div>
+    <div class="text" style="font-size:20px;color:white;left:320px;top:390px;width:400px;text-align:left">${data[10]}
+    </div>
+
+    <div class="text" style="font-size:15px;color:fuchsia;left:600px;top:200px;">Rank赠送</div>
+    <div class="text" style="font-size:15px;color:white;left:600px;top:280px;">公会</div>
+    <div class="text" style="font-size:20px;color:white;left:600px;top:230px;">${data[6]}</div>
+    <div class="text" style="font-size:20px;color:white;left:600px;top:310px;">${data[7]}</div>
+</body>
