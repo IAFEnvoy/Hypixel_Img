@@ -23,96 +23,27 @@ let browser = null;
     defaultViewport: { width: 800, height: 450 }
 }))();
 
-const hyp = async (name) => {
-    log(`Fetching player ${name} Hypixel data`);
-    await hypixel.download(name);
-    if (hypixel.data[name].nick == true)
-        return 404;
+const buildImg = async (name, type) => {
+    log(`Fetching player ${name} ${type} data`);
+    let stats = await hypixel.download(name);
+    if (stats != null)
+        return stats;
 
-    log(`Rendering player ${name} Hypixel image`);
+    log(`Rendering player ${name} ${type} image`);
     const page = await browser.newPage();
-    await page.goto(`file://${__dirname}/template/hyp.html`);
+    await page.goto(`file://${__dirname}/template/${type}.html`);
     // Add a style tag to the page
-    await page.evaluate((nameFormat, uuid, data) => {
-        document.body.innerHTML=document.body.innerHTML.replace('${nameFormat}',nameFormat).replace('${uuid}',uuid);
-        document.body.innerHTML=data.reduce((p,c,i)=>p.replace(`\${data[${i}]}`,c),document.body.innerHTML);
-    }, formatColor(hypixel.formatName(name)), await hypixel.getPlayerUuid(name), hypixel.getMiniData(name, 'ov'));
+    await page.evaluate((nameFormat, uuid, data, levelProgress) => {
+        document.body.innerHTML = document.body.innerHTML.replace('${nameFormat}', nameFormat).replace('${uuid}', uuid).replace('${levelProgress}', levelProgress);
+        document.body.innerHTML = data.reduce((p, c, i) => p.replace(`\${data[${i}]}`, c), document.body.innerHTML);
+    }, formatColor(hypixel.formatName(name)), await hypixel.getPlayerUuid(name), hypixel.getMiniData(name, type), hypixel.getLevelProgress(name,type));
     await sleep(1000);
     // Take a screenshot
-    log(`Saving player ${name} Hypixel image`);
-    await page.screenshot({ path: `./src/temp/${name}@hyp.png`, type: 'png' });
+    log(`Saving player ${name} ${type} image`);
+    await page.screenshot({ path: `./src/temp/${name}@${type}.png`, type: 'png' });
     await page.close();
     delete page;
-    log(`Complete player ${name} Hypixel image generate`);
-}
-
-const bw = async (name) => {
-    log(`Fetching player ${name} Bedwars data`);
-    await hypixel.download(name);
-    if (hypixel.data[name].nick == true)
-        return 404;
-
-    log(`Rendering player ${name} Bedwars image`);
-    const page = await browser.newPage();
-    await page.goto(`file://${__dirname}/template/bw.html`);
-    // Add a style tag to the page
-    await page.evaluate((nameFormat, uuid, data) => {
-        document.body.innerHTML=document.body.innerHTML.replace('${nameFormat}',nameFormat).replace('${uuid}',uuid);
-        document.body.innerHTML=data.reduce((p,c,i)=>p.replace(`\${data[${i}]}`,c),document.body.innerHTML);
-    }, formatColor(hypixel.formatName(name)), await hypixel.getPlayerUuid(name), hypixel.getMiniData(name, 'bw'));
-    await sleep(1000);
-    // Take a screenshot
-    log(`Saving player ${name} Bedwars image`);
-    await page.screenshot({ path: `./src/temp/${name}@bw.png`, type: 'png' });
-    await page.close();
-    delete page;
-    log(`Complete player ${name} Bedwars image generate`);
-}
-
-const sw = async (name) => {
-    log(`Fetching player ${name} SkyWar data`);
-    await hypixel.download(name);
-    if (hypixel.data[name].nick == true)
-        return 404;
-
-    log(`Rendering player ${name} SkyWar image`);
-    const page = await browser.newPage();
-    await page.goto(`file://${__dirname}/template/sw.html`);
-    // Add a style tag to the page
-    await page.evaluate((nameFormat, uuid, data) => {
-        document.body.innerHTML=document.body.innerHTML.replace('${nameFormat}',nameFormat).replace('${uuid}',uuid);
-        document.body.innerHTML=data.reduce((p,c,i)=>p.replace(`\${data[${i}]}`,c),document.body.innerHTML);
-    }, formatColor(hypixel.formatName(name)), await hypixel.getPlayerUuid(name), hypixel.getMiniData(name, 'sw'));
-    await sleep(1000);
-    // Take a screenshot
-    log(`Saving player ${name} SkyWar image`);
-    await page.screenshot({ path: `./src/temp/${name}@sw.png`, type: 'png' });
-    await page.close();
-    delete page;
-    log(`Complete player ${name} SkyWar image generate`);
-}
-
-const mm = async (name) => {
-    log(`Fetching player ${name} MurderMystery data`);
-    await hypixel.download(name);
-    if (hypixel.data[name].nick == true)
-        return 404;
-
-    log(`Rendering player ${name} MurderMystery image`);
-    const page = await browser.newPage();
-    await page.goto(`file://${__dirname}/template/sw.html`);
-    // Add a style tag to the page
-    await page.evaluate((nameFormat, uuid, data) => {
-        document.body.innerHTML=document.body.innerHTML.replace('${nameFormat}',nameFormat).replace('${uuid}',uuid);
-        document.body.innerHTML=data.reduce((p,c,i)=>p.replace(`\${data[${i}]}`,c),document.body.innerHTML);
-    }, formatColor(hypixel.formatName(name)), await hypixel.getPlayerUuid(name), hypixel.getMiniData(name, 'sw'));
-    await sleep(1000);
-    // Take a screenshot
-    log(`Saving player ${name} MurderMystery image`);
-    await page.screenshot({ path: `./src/temp/${name}@sw.png`, type: 'png' });
-    await page.close();
-    delete page;
-    log(`Complete player ${name} MurderMystery image generate`);
+    log(`Complete player ${name} ${type} image generate`);
 }
 
 
@@ -134,30 +65,30 @@ const server = http.createServer(async (req, res) => {
         return;
     }
     if (path == '/hyp') {
-        let r = await hyp(name);
-        if (r == 404) {
+        let r = await buildImg(name, 'hyp');
+        if (r != null) {
             res.writeHead(404, { 'Content-Type': 'text/plain' });
-            res.end('Not Found');
+            res.end(r);
         } else {
             res.writeHead(200, { 'Content-Type': 'text/plain' });
             res.end(`${__dirname}/temp/${name}@hyp.png`);
         }
     }
     if (path == '/bw') {
-        let r = await bw(name);
-        if (r == 404) {
+        let r = await buildImg(name, 'bw');
+        if (r != null) {
             res.writeHead(404, { 'Content-Type': 'text/plain' });
-            res.end('Not Found');
+            res.end(r);
         } else {
             res.writeHead(200, { 'Content-Type': 'text/plain' });
             res.end(`${__dirname}/temp/${name}@bw.png`);
         }
     }
     if (path == '/sw') {
-        let r = await sw(name);
-        if (r == 404) {
+        let r = await buildImg(name, 'sw');
+        if (r != null) {
             res.writeHead(404, { 'Content-Type': 'text/plain' });
-            res.end('Not Found');
+            res.end(r);
         } else {
             res.writeHead(200, { 'Content-Type': 'text/plain' });
             res.end(`${__dirname}/temp/${name}@sw.png`);

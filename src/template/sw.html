@@ -8,59 +8,94 @@
         }
 
         body {
-            background: url("./img/sw1.png");
+            background: url("./bg/sw1.png");
+        }
+
+        .mode {
+            font-family: Minecraftia;
+            position: absolute;
+            font-weight: bold;
+            display: inline-block;
+            color: white;
+            font-size: 25px;
         }
 
         .text {
             font-family: Minecraftia;
             position: absolute;
             font-weight: bold;
-            width: 200px;
             display: inline-block;
-            text-align: center
+            text-align: center;
+            width: 200px;
+        }
+
+        .background {
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 15px;
+            position: absolute;
+        }
+
+        .progress {
+            font-family: consolas;
+            font-size: 20px;
+            white-space: pre;
+            text-align: center;
         }
     </style>
 </head>
 
 <body style="width:900px;height:600px">
-    <div style="font-size:25px;font-family:Minecraftia;position:absolute;left:30px;top:20px">${nameFormat}</div>
-    <img src="https://skins.mcstats.com/body/front/${uuid}" style="position:absolute;left:30px;top:80px;height:270px">
+    <div class="background" style="left:10px;top:10px;width:780px;height:50px;"></div>
     <div
-        style="position:absolute;left:200px;top:70px;width:590px;height:360px;background-color:rgba(0,0,0,0.5);border-radius:30px;">
-    </div>
+        style="font-size:30px;font-family:Minecraftia;position:absolute;left:30px;top:20px;width:740px;text-align:center;">
+        ${nameFormat}</div>
 
-    <div class="text" style="font-size:15px;color:orange;left:200px;top:80px;;">等级</div>
-    <div class="text" style="font-size:15px;color:orange;left:400px;top:80px;">硬币</div>
+    <div class="background" style="left:10px;top:70px;width:90px;height:290px;"></div>
+    <img src="./icon/Skywars-64.png" style="position:absolute;left:20px;top:80px;height:70px">
+    <div class="mode" style="position:absolute;writing-mode:vertical-rl;left:25px;top:165px;">空岛战争<br>全局</div>
+
+    <div class="background" style="left:110px;top:70px;width:180px;height:290px;"></div>
+    <img src="https://skins.mcstats.com/body/front/${uuid}" style="position:absolute;left:120px;top:80px;height:270px">
+
+    <div class="background" style="left:10px;top:370px;width:280px;height:70px;"></div>
+    <div
+        style="font-size:20px;font-family:Minecraftia;color:white;position:absolute;left:40px;top:380px;text-align:center;">
+        ${levelProgress}</div>
+
+    <div class="background" style="left:300px;top:70px;width:490px;height:290px;"></div>
+
+    <div class="text" style="font-size:15px;color:orange;left:300px;top:80px;">等级</div>
+    <div class="text" style="font-size:15px;color:orange;left:450px;top:80px;">硬币</div>
     <div class="text" style="font-size:15px;color:orange;left:600px;top:80px;">代币</div>
-    <div class="text" style="font-size:25px;color:white;left:200px;top:100px;">${data[0]}</div>
-    <div class="text" style="font-size:25px;color:gold;left:400px;top:105px;">${data[1]}</div>
-    <div class="text" style="font-size:25px;color:green;left:600px;top:105px;">${data[2]}</div>
+    <div class="text" style="font-size:20px;color:white;left:300px;top:100px;">${data[0]}</div>
+    <div class="text" style="font-size:20px;color:gold;left:450px;top:100px;">${data[1]}</div>
+    <div class="text" style="font-size:20px;color:green;left:600px;top:100px;">${data[2]}</div>
 
-    <div class="text" style="font-size:15px;color:orange;left:200px;top:150px;">胜场</div>
-    <div class="text" style="font-size:15px;color:orange;left:400px;top:150px;">W/L</div>
-    <div class="text" style="font-size:15px;color:orange;left:600px;top:150px;">败场</div>
-    <div class="text" style="font-size:25px;color:greenyellow;left:200px;top:175px;">${data[3]}</div>
-    <div class="text" style="font-size:25px;color:yellow;left:400px;top:175px;">${data[4]}</div>
-    <div class="text" style="font-size:25px;color:red;left:600px;top:175px;">${data[5]}</div>
+    <div class="text" style="font-size:15px;color:orange;left:300px;top:135px;">胜场</div>
+    <div class="text" style="font-size:15px;color:orange;left:450px;top:135px;">W/L</div>
+    <div class="text" style="font-size:15px;color:orange;left:600px;top:135px;">败场</div>
+    <div class="text" style="font-size:20px;color:greenyellow;left:300px;top:155px;">${data[3]}</div>
+    <div class="text" style="font-size:20px;color:yellow;left:450px;top:155px;">${data[4]}</div>
+    <div class="text" style="font-size:20px;color:red;left:600px;top:155px;">${data[5]}</div>
 
-    <div class="text" style="font-size:15px;color:orange;left:200px;top:220px;">击杀</div>
-    <div class="text" style="font-size:15px;color:orange;left:400px;top:220px;">K/D</div>
-    <div class="text" style="font-size:15px;color:orange;left:600px;top:220px;">死亡</div>
-    <div class="text" style="font-size:25px;color:greenyellow;left:200px;top:245px;">${data[6]}</div>
-    <div class="text" style="font-size:25px;color:yellow;left:400px;top:245px;">${data[7]}</div>
-    <div class="text" style="font-size:25px;color:red;left:600px;top:245px;">${data[8]}</div>
+    <div class="text" style="font-size:15px;color:orange;left:300px;top:190px;">击杀</div>
+    <div class="text" style="font-size:15px;color:orange;left:450px;top:190px;">K/D</div>
+    <div class="text" style="font-size:15px;color:orange;left:600px;top:190px;">死亡</div>
+    <div class="text" style="font-size:20px;color:greenyellow;left:300px;top:210px;">${data[6]}</div>
+    <div class="text" style="font-size:20px;color:yellow;left:450px;top:210px;">${data[7]}</div>
+    <div class="text" style="font-size:20px;color:red;left:600px;top:210px;">${data[8]}</div>
 
-    <div class="text" style="font-size:15px;color:orange;left:200px;top:290px;">灵魂</div>
-    <div class="text" style="font-size:15px;color:orange;left:400px;top:290px;">头颅</div>
-    <div class="text" style="font-size:15px;color:orange;left:600px;top:290px;">助攻</div>
-    <div class="text" style="font-size:25px;color:aqua;left:200px;top:315px;">${data[9]}</div>
-    <div class="text" style="font-size:25px;color:fuchsia;left:400px;top:315px;">${data[10]}</div>
-    <div class="text" style="font-size:25px;color:red;left:600px;top:315px;">${data[11]}</div>
+    <div class="text" style="font-size:15px;color:orange;left:300px;top:245px;">灵魂</div>
+    <div class="text" style="font-size:15px;color:orange;left:450px;top:245px;">头颅</div>
+    <div class="text" style="font-size:15px;color:orange;left:600px;top:245px;">助攻</div>
+    <div class="text" style="font-size:20px;color:aqua;left:300px;top:265px;">${data[9]}</div>
+    <div class="text" style="font-size:20px;color:fuchsia;left:450px;top:265px;">${data[10]}</div>
+    <div class="text" style="font-size:20px;color:red;left:600px;top:265px;">${data[11]}</div>
 
-    <div class="text" style="font-size:15px;color:orange;left:200px;top:360px;">欧泊</div>
-    <div class="text" style="font-size:15px;color:orange;left:400px;top:360px;">游玩时间</div>
-    <div class="text" style="font-size:15px;color:orange;left:600px;top:360px;">碎片</div>
-    <div class="text" style="font-size:25px;color:blue;left:200px;top:385px;">${data[12]}</div>
-    <div class="text" style="font-size:25px;color:greenyellow;left:400px;top:385px;">${data[13]}</div>
-    <div class="text" style="font-size:25px;color:blue;left:600px;top:385px;">${data[14]}/1.5k</div>
+    <div class="text" style="font-size:15px;color:orange;left:300px;top:300px;">欧泊</div>
+    <div class="text" style="font-size:15px;color:orange;left:450px;top:300px;">游玩时间</div>
+    <div class="text" style="font-size:15px;color:orange;left:600px;top:300px;">碎片</div>
+    <div class="text" style="font-size:20px;color:blue;left:300px;top:320px;">${data[12]}</div>
+    <div class="text" style="font-size:20px;color:greenyellow;left:450px;top:320px;">${data[13]}</div>
+    <div class="text" style="font-size:20px;color:blue;left:600px;top:320px;">${data[14]}/1.5k</div>
 </body>

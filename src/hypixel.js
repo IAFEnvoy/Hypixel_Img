@@ -1,4 +1,4 @@
-const { formatColor, formatColorFromString, formatTime, formatNameString,formatDateTime, toDefault } = require('./util');
+const { formatColor, formatColorFromString, formatTime, formatNameString, formatDateTime, toDefault } = require('./util');
 
 //this file contains api to hypixel
 class Hypixel {
@@ -10,8 +10,6 @@ class Hypixel {
         this.uuids = [];
         this.mention_guild = [];
         this.download_count = 0;
-        this.mojang_ping = 0;
-        this.hypixel_ping = 0;
     }
     verifyKey = async (callback) => {
         try {
@@ -35,11 +33,9 @@ class Hypixel {
     getPlayerUuid = async (name) => {//null when the player not found
         if (this.uuids[name] != null) return this.uuids[name];
         try {
-            let start = new Date().getTime();
             let a = await fetch(`https://api.mojang.com/users/profiles/minecraft/${name}`)
-                .catch(err => { throw err })
+                .catch(_ => { throw 'ERROR 11 : Mojang API Error' })
                 .then(res => res.json());
-            this.mojang_ping = new Date().getTime() - start;
             return this.uuids[name] = a.id;
         } catch (err) {
             console.log(err);
@@ -48,46 +44,41 @@ class Hypixel {
         }
     }
     getPlayerData = async (uuid) => {
-        let start = new Date().getTime();
         let res = await fetch(`https://api.hypixel.net/player?key=${this.apiKey}&uuid=${uuid}`)
-            .catch(err => { throw err })
+            .catch(_ => { throw 'ERROR 12 : Hypixel API Error' })
             .then(res => res.json());
-        this.hypixel_ping = new Date().getTime() - start;
         return res;
     }
     getGuildData = async (uuid) => {
-        let start = new Date().getTime();
         let res = await fetch(`https://api.hypixel.net/guild?key=${this.apiKey}&player=${uuid}`)
-            .catch(err => { throw err })
+            .catch(_ => { throw 'ERROR 12 : Hypixel API Error' })
             .then(res => res.json());
-        this.hypixel_ping = new Date().getTime() - start;
         return res;
     }
     download = async (name, callback) => {//true if success, false if player not found, null if api error
         try {
             if (this.data[name] != null && this.data[name].success == true && this.data[name].nick == false && this.data[name].time + 120 * 1000 > new Date().getTime())
-                return true;
+                return null;
             this.data[name] = { success: false };
             let uuid = await this.getPlayerUuid(name);
             if (uuid == null) {
                 this.data[name] = { success: true, time: new Date().getTime(), nick: true };
                 if (callback != null) callback();
-                return false;
+                return 'ERROR 00 : Player not found';
             }
             let playerData = await this.getPlayerData(uuid);
             let guildData = await this.getGuildData(uuid);
             if (!playerData.success || !guildData.success) return null;
             if (playerData.player == null) {
                 this.data[name] = { success: true, time: new Date().getTime(), nick: true };
-                return false;
+                return 'ERROR 01 : Player haven\'t join Hypixel';
             }
             this.data[name] = { success: true, time: new Date().getTime(), nick: false, player: playerData.player, guild: guildData.guild };
             if (callback != null) callback();
-            return true;
+            return null;
         } catch (err) {
             this.data[name] = { success: true, time: new Date().getTime(), nick: true };
-            console.log(err);
-            return false;
+            return err;
         }
     }
     getRank = (name) => {
@@ -121,11 +112,6 @@ class Hypixel {
     }
     formatName = (name) => `${this.getRank(name)}${this.data[name].player.displayname}${this.getGuildTag(name)}`;
     getLevel = (exp) => exp < 0 ? 1 : (1 - 3.5 + Math.sqrt(12.25 + 0.0008 * (exp ?? 0))).toFixed(2);
-    getTitle = (type) => {
-        let title = gameTitle[type];
-        if (title != null) return title;
-        return [];
-    }
     getTag = (name) => {
         let api = this.data[name].player;
         let guild_id = this.data[name]?.guild?._id ?? '';
@@ -160,28 +146,90 @@ class Hypixel {
     }
     getMiniData = (name, type, sub) => {
         if (this.data[name].nick) return [{ format: name, value: name }, 'NICK'];
-        let api = this.data[name].player;
+        let api = this.data[name]?.player ?? {};
         let lvl = this.getLevel(api?.networkExp ?? 0);
         let achievements = api.achievements ?? {};
         let bedwar = api.stats?.Bedwars ?? {};
         let skywar = api.stats?.SkyWars ?? {};
-        if (type == 'ov')
-            return [lvl, api.karma ?? 0, formatNameString(api.userLanguage ?? 'ENGLISH'),
+        if (type == 'hyp')
+            return [lvl, api.karma ?? 0, api?.giftingMeta?.ranksGiven ?? 0,
                 api.achievementPoints ?? 0, achievements.general_quest_master ?? 0, achievements.general_challenger ?? 0,
-                api?.giftingMeta?.ranksGiven ?? 0, this.data[name]?.guild?.name ?? '无公会',
-                formatDateTime(api.firstLogin),formatDateTime(api.lastLogin),formatDateTime(api.lastLogout)];
+                formatNameString(api.userLanguage ?? 'ENGLISH'), formatColor(formatColorFromString(this.data[name]?.guild?.tagColor ?? 'gray') + this.data[name]?.guild?.name ?? '无公会'),
+                formatDateTime(api.firstLogin), formatDateTime(api.lastLogin), formatDateTime(api.lastLogout),
+                formatNameString(api.mostRecentGameType ?? 'none')];
         if (type == 'bw')
             return [formatBwLevel(api.achievements?.bedwars_level ?? 1), bedwar.winstreak ?? 0, bedwar.coins ?? 0,
             bedwar.wins_bedwars ?? 0, ((bedwar.wins_bedwars ?? 0) / (bedwar.losses_bedwars ?? 0)).toFixed(2), bedwar.losses_bedwars ?? 0,
             bedwar.kills_bedwars ?? 0, ((bedwar.kills_bedwars ?? 0) / (bedwar.deaths_bedwars ?? 0)).toFixed(2), bedwar.deaths_bedwars ?? 0,
             bedwar.final_kills_bedwars ?? 0, ((bedwar.final_kills_bedwars ?? 0) / (bedwar.final_deaths_bedwars ?? 0)).toFixed(2), bedwar.final_deaths_bedwars ?? 0,
-            bedwar.beds_broken_bedwars ?? 0, ((bedwar.beds_broken_bedwars ?? 0) / (bedwar.beds_lost_bedwars ?? 0)).toFixed(2), bedwar.beds_lost_bedwars ?? 0];
+            bedwar.beds_broken_bedwars ?? 0, ((bedwar.beds_broken_bedwars ?? 0) / (bedwar.beds_lost_bedwars ?? 0)).toFixed(2), bedwar.beds_lost_bedwars ?? 0,
+            bedwar.iron_resources_collected_bedwars ?? 0, bedwar.gold_resources_collected_bedwars ?? 0,
+            bedwar.diamond_resources_collected_bedwars ?? 0, bedwar.emerald_resources_collected_bedwars ?? 0];
         if (type == 'sw')
             return [formatColor(skywar.levelFormatted), skywar.coins ?? 0, skywar.cosmetic_tokens ?? 0,
-            skywar.wins ?? 0,((skywar.wins ?? 0) / (skywar.losses ?? 0)).toFixed(2),skywar.losses ?? 0,
-            skywar.kills ?? 0,((skywar.kills ?? 0) / (skywar.deaths ?? 0)).toFixed(2),skywar.deaths ?? 0,
-            skywar.souls ?? 0, skywar.heads??0, skywar.assists ?? 0,
-            skywar.opals ?? 0, formatTime(skywar.time_played), skywar.shard??0];
+            skywar.wins ?? 0, ((skywar.wins ?? 0) / (skywar.losses ?? 0)).toFixed(2), skywar.losses ?? 0,
+            skywar.kills ?? 0, ((skywar.kills ?? 0) / (skywar.deaths ?? 0)).toFixed(2), skywar.deaths ?? 0,
+            skywar.souls ?? 0, skywar.heads ?? 0, skywar.assists ?? 0,
+            skywar.opals ?? 0, formatTime(skywar.time_played), skywar.shard ?? 0];
+    }
+    getLevelProgress = (name, type) => {
+        let api = this.data[name]?.player ?? {};
+        if (type == 'hyp') {
+            let lvl = this.getLevel(api?.networkExp ?? 0);
+            let now = Math.floor(lvl);
+            let block = Math.floor((lvl - now) * 10);
+            return `<span class="progress">${now}</span><br>
+            <span class="progress" style="color:aqua;">${Array.from({ length: block }).reduce(p => p + '▉', '')}</span>
+            <span class="progress" style="color:grey">${Array.from({ length: 10 - block }).reduce(p => p + '▉', '')}</span>`;
+        }
+        if (type == 'bw') {
+            let exp = api?.stats?.Bedwars?.Experience ?? 0;
+            let lvl = api?.achievements?.bedwars_level ?? 1;
+            exp %= 487000;
+            let max, block;
+            let remains = [{ val: 500, text: '500' }, { val: 1000, text: '1k' }, { val: 2000, text: '2k' }, { val: 3500, text: '3.5k' }].reduce((p, c) => {
+                if (p == null) return null;
+                if (p < c.val) {
+                    max = c.text;
+                    block = Math.floor(exp * 10 / c.val);
+                    return null;
+                }
+                return exp - c.val;
+            }, exp);
+            if (remains != null) {
+                max = '5k';
+                exp %= 5000;
+                block = Math.floor(exp / 500);
+            }
+            return `<span class="progress">${formatBwLevel(lvl)} ${exp}/${max}</span><br>
+            <span class="progress" style="color:aqua;">${Array.from({ length: block }).reduce(p => p + '▉', '')}</span>
+            <span class="progress" style="color:grey">${Array.from({ length: 10 - block }).reduce(p => p + '▉', '')}</span>`;
+        }
+        if (type == 'sw') {
+            let exp = Math.round(api?.stats?.SkyWars?.skywars_experience ?? 0);
+            let max, block, lvl;
+            let remains = [{ val: 20, text: '20' }, { val: 50, text: '50' }, { val: 80, text: '80' }, { val: 100, text: '100' },
+            { val: 250, text: '250' }, { val: 500, text: '500' }, { val: 1000, text: '1k' }, { val: 1500, text: '1.5k' },
+            { val: 2500, text: '2.5k' }, { val: 4000, text: '4k' }, { val: 5000, text: '5k' }].reduce((p, c, i) => {
+                if (p == null) return null;
+                if (p < c.val) {
+                    max = c.text;
+                    block = Math.floor(exp * 10 / c.val);
+                    lvl = i;
+                    return null;
+                }
+                return exp - c.val;
+            }, exp);
+            if (remains != null) {
+                max = '10k';
+                lvl = Math.floor(12 + remains / 10000);
+                remains %= 10000;
+                block = Math.floor(remains / 1000);
+            }
+            return `<span class="progress">${formatColor(api?.stats?.SkyWars?.levelFormatted)} ${remains}/${max}</span><br>
+            <span class="progress" style="color:aqua;">${Array.from({ length: block }).reduce(p => p + '▉', '')}</span>
+            <span class="progress" style="color:grey">${Array.from({ length: 10 - block }).reduce(p => p + '▉', '')}</span>`;
+        }
     }
     getGuild = (name) => getGuild[config.get('lang')](this.data[name].guild, this.uuids[name]);
     getStatus = async (name) => {
@@ -305,7 +353,7 @@ const bwLvlProvider = [
     (lvl) => `§b[${Math.floor(lvl / 1000)}§3${Math.floor(lvl / 100 % 10)}${Math.floor(lvl / 10 % 10)}§9${lvl % 10}⚝§1]`
 ], bwLvlProviderMax = (lvl) => `§e[3§6${Math.floor(lvl / 10 % 100)}§c${lvl % 10}⚝§4]`;
 const formatBwLevel = (lvl) => {
-    let i = Math.floor((lvl - 1) / 100);
+    let i = Math.floor(lvl / 100);
     let ret = bwLvlProvider[i];
     if (ret == null) ret = bwLvlProviderMax;
     return formatColor(ret(lvl));

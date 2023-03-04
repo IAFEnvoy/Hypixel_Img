@@ -8,53 +8,91 @@
         }
 
         body {
-            background: url("./img/ov1.png");
+            background: url("./bg/ov1.png");
+        }
+
+        .mode {
+            font-family: Minecraftia;
+            position: absolute;
+            font-weight: bold;
+            display: inline-block;
+            color: white;
+            font-size: 25px;
         }
 
         .text {
             font-family: Minecraftia;
             position: absolute;
             font-weight: bold;
-            width: 200px;
             display: inline-block;
-            text-align: center
+            text-align: center;
+            width: 200px;
+        }
+
+        .background {
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 15px;
+            position: absolute;
+        }
+
+        .progress {
+            font-family: consolas;
+            font-size: 20px;
+            white-space: pre;
+            text-align: center;
         }
     </style>
 </head>
 
 <body style="width:900px;height:600px">
-    <div style="font-size:15px;font-family:Minecraftia;position:absolute;left:30px;top:40px">${nameFormat}</div>
-    <img src="https://skins.mcstats.com/body/front/${uuid}" style="position:absolute;left:50px;top:80px;height:270px">
+    <div class="background" style="left:10px;top:10px;width:780px;height:50px;"></div>
     <div
-        style="position:absolute;left:300px;top:20px;width:490px;height:410px;background-color:rgba(0,0,0,0.5);border-radius:30px;">
-    </div>
+        style="font-size:30px;font-family:Minecraftia;position:absolute;left:30px;top:20px;width:740px;text-align:center;">
+        ${nameFormat}</div>
 
-    <div class="text" style="font-size:15px;color:red;left:300px;top:30px;">等级</div>
-    <div class="text" style="font-size:15px;color:orange;left:450px;top:30px;">人品</div>
-    <div class="text" style="font-size:15px;color:yellow;left:600px;top:30px;">语言</div>
-    <div class="text" style="font-size:20px;color:white;left:300px;top:60px;">${data[0]}</div>
-    <div class="text" style="font-size:20px;color:white;left:450px;top:60px;">${data[1]}</div>
-    <div class="text" style="font-size:20px;color:white;left:600px;top:60px;">${data[2]}</div>
+    <div class="background" style="left:10px;top:70px;width:90px;height:290px;"></div>
+    <img src="./icon/blue-avatar.png" style="position:absolute;left:20px;top:80px;height:70px">
+    <div class="mode" style="position:absolute;writing-mode:vertical-rl;left:25px;top:165px;">Hypixel<br>Network数据</div>
 
-    <div class="text" style="font-size:15px;color:greenyellow;left:300px;top:120px;">成就点数</div>
-    <div class="text" style="font-size:15px;color:aqua;left:450px;top:120px;">完成任务</div>
-    <div class="text" style="font-size:15px;color:blue;left:600px;top:120px;">完成挑战</div>
-    <div class="text" style="font-size:20px;color:white;left:300px;top:150px;">${data[3]}</div>
-    <div class="text" style="font-size:20px;color:white;left:450px;top:150px;">${data[4]}</div>
-    <div class="text" style="font-size:20px;color:white;left:600px;top:150px;">${data[5]}</div>
+    <div class="background" style="left:110px;top:70px;width:180px;height:290px;"></div>
+    <img src="https://skins.mcstats.com/body/front/${uuid}" style="position:absolute;left:120px;top:80px;height:270px">
+
+    <div class="background" style="left:10px;top:370px;width:280px;height:70px;"></div>
+    <div
+        style="font-size:20px;font-family:Minecraftia;color:white;position:absolute;left:40px;top:380px;text-align:center;">
+        ${levelProgress}</div>
+
+    <div class="background" style="left:300px;top:70px;width:490px;height:370px;"></div>
+
+    <div class="text" style="font-size:15px;color:red;left:300px;top:80px;">等级</div>
+    <div class="text" style="font-size:15px;color:orange;left:450px;top:80px;">人品</div>
+    <div class="text" style="font-size:15px;color:yellow;left:600px;top:80px;">Rank赠送</div>
+    <div class="text" style="font-size:20px;color:white;left:300px;top:100px;">${data[0]}</div>
+    <div class="text" style="font-size:20px;color:white;left:450px;top:100px;">${data[1]}</div>
+    <div class="text" style="font-size:20px;color:white;left:600px;top:100px;">${data[2]}</div>
+
+    <div class="text" style="font-size:15px;color:greenyellow;left:300px;top:140px;">成就点数</div>
+    <div class="text" style="font-size:15px;color:aqua;left:450px;top:140px;">完成任务</div>
+    <div class="text" style="font-size:15px;color:blue;left:600px;top:140px;">完成挑战</div>
+    <div class="text" style="font-size:20px;color:white;left:300px;top:160px;">${data[3]}</div>
+    <div class="text" style="font-size:20px;color:white;left:450px;top:160px;">${data[4]}</div>
+    <div class="text" style="font-size:20px;color:white;left:600px;top:160px;">${data[5]}</div>
 
     <div class="text" style="font-size:15px;color:red;left:300px;top:200px;">首次登入</div>
-    <div class="text" style="font-size:15px;color:orange;left:300px;top:280px;">上次登入</div>
-    <div class="text" style="font-size:15px;color:yellow;left:300px;top:360px;">上次登出</div>
-    <div class="text" style="font-size:20px;color:white;left:320px;top:230px;width:400px;text-align:left">${data[8]}
+    <div class="text" style="font-size:15px;color:orange;left:300px;top:260px;">上次登入</div>
+    <div class="text" style="font-size:15px;color:yellow;left:300px;top:320px;">上次登出</div>
+    <div class="text" style="font-size:15px;color:aqua;left:300px;top:380px;">最近游戏</div>
+    <div class="text" style="font-size:20px;color:white;left:320px;top:220px;width:400px;text-align:left">${data[8]}
     </div>
-    <div class="text" style="font-size:20px;color:white;left:320px;top:310px;width:400px;text-align:left">${data[9]}
+    <div class="text" style="font-size:20px;color:white;left:320px;top:280px;width:400px;text-align:left">${data[9]}
     </div>
-    <div class="text" style="font-size:20px;color:white;left:320px;top:390px;width:400px;text-align:left">${data[10]}
+    <div class="text" style="font-size:20px;color:white;left:320px;top:340px;width:400px;text-align:left">${data[10]}
+    </div>
+    <div class="text" style="font-size:20px;color:white;left:320px;top:400px;width:400px;text-align:left">${data[11]}
     </div>
 
-    <div class="text" style="font-size:15px;color:fuchsia;left:600px;top:200px;">Rank赠送</div>
-    <div class="text" style="font-size:15px;color:white;left:600px;top:280px;">公会</div>
-    <div class="text" style="font-size:20px;color:white;left:600px;top:230px;">${data[6]}</div>
-    <div class="text" style="font-size:20px;color:white;left:600px;top:310px;">${data[7]}</div>
+    <div class="text" style="font-size:15px;color:fuchsia;left:600px;top:200px;">语言</div>
+    <div class="text" style="font-size:15px;color:white;left:600px;top:320px;">公会</div>
+    <div class="text" style="font-size:20px;color:white;left:600px;top:220px;">${data[6]}</div>
+    <div class="text" style="font-size:20px;color:white;left:600px;top:340px;">${data[7]}</div>
 </body>
