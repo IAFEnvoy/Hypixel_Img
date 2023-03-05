@@ -44,7 +44,10 @@
     </style>
 </head>
 
-<body style="width:900px;height:600px">
+<body style="width:900px;height:600px;">
+    <script>
+        let loaded = false;
+    </script>
     <div class="background" style="left:10px;top:10px;width:780px;height:50px;"></div>
     <div
         style="font-size:30px;font-family:Minecraftia;position:absolute;left:30px;top:20px;width:740px;text-align:center;">
@@ -55,7 +58,8 @@
     <div class="mode" style="position:absolute;writing-mode:vertical-rl;left:25px;top:165px;">Hypixel<br>Network数据</div>
 
     <div class="background" style="left:110px;top:70px;width:180px;height:290px;"></div>
-    <img src="https://skins.mcstats.com/body/front/${uuid}" style="position:absolute;left:120px;top:80px;height:270px">
+    <img src="https://skins.mcstats.com/body/front/${uuid}" style="position:absolute;left:120px;top:80px;height:270px"
+        onload="loaded=true">
 
     <div class="background" style="left:10px;top:370px;width:280px;height:70px;"></div>
     <div

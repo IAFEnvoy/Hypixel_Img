@@ -9,7 +9,7 @@ const colors = [
     '#555555', '#5555FF', '#55FF55', '#55FFFF', '#FF5555', '#FF55FF', '#FFFF55', '#FFFFFF'
 ];
 const formatColor = (data) => {
-    if (data == null) return 'Fail to get';
+    if (data == null) return null;
     return data.replaceAll('§l', '').split('').reduce((ret, char, index, arr) =>
         ret += char == '§' ? '</span>' : arr[index - 1] == '§' ? '<span style="color:' + colors[parseInt(char, 16)] + '">' : char,
         '<span style="color:' + colors[0] + '">') + '</span>';
@@ -18,7 +18,7 @@ const formatColor = (data) => {
 const toDefault = (v, u, d) => v == u ? d : v;
 
 const formatDateTime = (date) => {
-    if (date == null) return 'Fail to get';
+    if (date == null) return null;
     date = new Date(date);
     let y = date.getFullYear();
     let m = date.getMonth() + 1; //注意这个“+1”

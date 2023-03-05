@@ -155,10 +155,10 @@ class Hypixel {
             return [lvl, api.karma ?? 0, api?.giftingMeta?.ranksGiven ?? 0,
                 api.achievementPoints ?? 0, achievements.general_quest_master ?? 0, achievements.general_challenger ?? 0,
                 formatNameString(api.userLanguage ?? 'ENGLISH'), formatColor(formatColorFromString(this.data[name]?.guild?.tagColor ?? 'gray') + this.data[name]?.guild?.name ?? '无公会'),
-                formatDateTime(api.firstLogin), formatDateTime(api.lastLogin), formatDateTime(api.lastLogout),
+                formatDateTime(api.firstLogin), formatDateTime(api.lastLogin) ?? '玩家阻止获取', formatDateTime(api.lastLogout) ?? '玩家阻止获取',
                 formatNameString(api.mostRecentGameType ?? 'none')];
         if (type == 'bw')
-            return [formatBwLevel(api.achievements?.bedwars_level ?? 1), bedwar.winstreak ?? 0, bedwar.coins ?? 0,
+            return [formatBwLevel(api.achievements?.bedwars_level ?? 1), bedwar.winstreak ?? '玩家阻止获取', bedwar.coins ?? 0,
             bedwar.wins_bedwars ?? 0, ((bedwar.wins_bedwars ?? 0) / (bedwar.losses_bedwars ?? 0)).toFixed(2), bedwar.losses_bedwars ?? 0,
             bedwar.kills_bedwars ?? 0, ((bedwar.kills_bedwars ?? 0) / (bedwar.deaths_bedwars ?? 0)).toFixed(2), bedwar.deaths_bedwars ?? 0,
             bedwar.final_kills_bedwars ?? 0, ((bedwar.final_kills_bedwars ?? 0) / (bedwar.final_deaths_bedwars ?? 0)).toFixed(2), bedwar.final_deaths_bedwars ?? 0,

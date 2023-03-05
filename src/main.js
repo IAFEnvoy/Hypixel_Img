@@ -37,7 +37,13 @@ const buildImg = async (name, type) => {
         document.body.innerHTML = document.body.innerHTML.replace('${nameFormat}', nameFormat).replace('${uuid}', uuid).replace('${levelProgress}', levelProgress);
         document.body.innerHTML = data.reduce((p, c, i) => p.replace(`\${data[${i}]}`, c), document.body.innerHTML);
     }, formatColor(hypixel.formatName(name)), await hypixel.getPlayerUuid(name), hypixel.getMiniData(name, type), hypixel.getLevelProgress(name,type));
-    await sleep(1000);
+    // await sleep(1000);
+    let renderdoneHandle = await page.waitForFunction('loaded==true', {
+        polling: 120
+    });
+    const renderdone = await renderdoneHandle.jsonValue();
+    if (typeof renderdone === 'object') 
+        console.log(`加载页面失败：报表${renderdone.componentId}出错 -- ${renderdone.message}`);
     // Take a screenshot
     log(`Saving player ${name} ${type} image`);
     await page.screenshot({ path: `./src/temp/${name}@${type}.png`, type: 'png' });
