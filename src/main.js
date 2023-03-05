@@ -20,7 +20,7 @@ const hypixel = new Hypixel(config.get('apikey'));
 
 let browser = null;
 (async () => browser = await puppeteer.launch({
-    defaultViewport: { width: 800, height: 450 }
+    defaultViewport: { width: 1600, height: 900 }
 }))();
 
 const buildImg = async (name, type) => {
@@ -42,7 +42,7 @@ const buildImg = async (name, type) => {
         polling: 120
     });
     const renderdone = await renderdoneHandle.jsonValue();
-    if (typeof renderdone === 'object') 
+    if (typeof renderdone == 'object') 
         console.log(`加载页面失败：报表${renderdone.componentId}出错 -- ${renderdone.message}`);
     // Take a screenshot
     log(`Saving player ${name} ${type} image`);

@@ -166,7 +166,7 @@ class Hypixel {
             bedwar.iron_resources_collected_bedwars ?? 0, bedwar.gold_resources_collected_bedwars ?? 0,
             bedwar.diamond_resources_collected_bedwars ?? 0, bedwar.emerald_resources_collected_bedwars ?? 0];
         if (type == 'sw')
-            return [formatColor(skywar.levelFormatted), skywar.coins ?? 0, skywar.cosmetic_tokens ?? 0,
+            return [formatColor(skywar.levelFormatted ?? '§71⋆'), skywar.coins ?? 0, skywar.cosmetic_tokens ?? 0,
             skywar.wins ?? 0, ((skywar.wins ?? 0) / (skywar.losses ?? 0)).toFixed(2), skywar.losses ?? 0,
             skywar.kills ?? 0, ((skywar.kills ?? 0) / (skywar.deaths ?? 0)).toFixed(2), skywar.deaths ?? 0,
             skywar.souls ?? 0, skywar.heads ?? 0, skywar.assists ?? 0,
@@ -192,14 +192,16 @@ class Hypixel {
                 if (p < c.val) {
                     max = c.text;
                     block = Math.floor(exp * 10 / c.val);
+                    exp = p;
                     return null;
                 }
-                return exp - c.val;
+                return p - c.val;
             }, exp);
             if (remains != null) {
                 max = '5k';
-                exp %= 5000;
-                block = Math.floor(exp / 500);
+                remains %= 5000;
+                block = Math.floor(remains / 500);
+                exp = remains;
             }
             return `<span class="progress">${formatBwLevel(lvl)} ${exp}/${max}</span><br>
             <span class="progress" style="color:aqua;">${Array.from({ length: block }).reduce(p => p + '▉', '')}</span>
@@ -216,17 +218,18 @@ class Hypixel {
                     max = c.text;
                     block = Math.floor(exp * 10 / c.val);
                     lvl = i;
+                    exp = p;
                     return null;
                 }
-                return exp - c.val;
+                return p - c.val;
             }, exp);
             if (remains != null) {
                 max = '10k';
                 lvl = Math.floor(12 + remains / 10000);
                 remains %= 10000;
                 block = Math.floor(remains / 1000);
-            }
-            return `<span class="progress">${formatColor(api?.stats?.SkyWars?.levelFormatted)} ${remains}/${max}</span><br>
+            } else remains = exp;
+            return `<span class="progress">${formatColor(api?.stats?.SkyWars?.levelFormatted ?? '§71⋆')} ${remains}/${max}</span><br>
             <span class="progress" style="color:aqua;">${Array.from({ length: block }).reduce(p => p + '▉', '')}</span>
             <span class="progress" style="color:grey">${Array.from({ length: 10 - block }).reduce(p => p + '▉', '')}</span>`;
         }
@@ -307,17 +310,17 @@ const buildSpan = (list, value, prefix, suffix) => {
 };
 
 const duelLvlList = [
-    { lvl: 100, txt: '' },
-    { lvl: 120, txt: '§7[I]' }, { lvl: 140, txt: '§7[II]' }, { lvl: 160, txt: '§7[III]' }, { lvl: 180, txt: '§7[IV]' }, { lvl: 200, txt: '§7[V]' },
-    { lvl: 260, txt: '§f[I]' }, { lvl: 320, txt: '§f[II]' }, { lvl: 380, txt: '§f[III]' }, { lvl: 440, txt: '§f[IV]' }, { lvl: 500, txt: '§f[V]' },
-    { lvl: 600, txt: '§6[I]' }, { lvl: 700, txt: '§6[II]' }, { lvl: 800, txt: '§6[III]' }, { lvl: 900, txt: '§6[IV]' }, { lvl: 1000, txt: '§6[V]' },
-    { lvl: 1200, txt: '§3[I]' }, { lvl: 1400, txt: '§3[II]' }, { lvl: 1600, txt: '§3[III]' }, { lvl: 1800, txt: '§3[IV]' }, { lvl: 2000, txt: '§3[V]' },
-    { lvl: 2400, txt: '§2[I]' }, { lvl: 2800, txt: '§2[II]' }, { lvl: 3200, txt: '§2[III]' }, { lvl: 3600, txt: '§2[IV]' }, { lvl: 4000, txt: '§2[V]' },
-    { lvl: 5200, txt: '§4[I]' }, { lvl: 6400, txt: '§4[II]' }, { lvl: 7600, txt: '§4[III]' }, { lvl: 8800, txt: '§4[IV]' }, { lvl: 10000, txt: '§4[V]' },
-    { lvl: 12000, txt: '§e[I]' }, { lvl: 14000, txt: '§e[II]' }, { lvl: 16000, txt: '§e[III]' }, { lvl: 18000, txt: '§e[IV]' }, { lvl: 20000, txt: '§e[V]' },
-    { lvl: 24000, txt: '§5[I]' }, { lvl: 28000, txt: '§5[II]' }, { lvl: 32000, txt: '§5[III]' }, { lvl: 36000, txt: '§5[IV]' }, { lvl: 40000, txt: '§5[V]' },
-    { lvl: 44000, txt: '§5[VI]' }, { lvl: 48000, txt: '§5[VII]' }, { lvl: 52000, txt: '§5[VII]' }, { lvl: 56000, txt: '§5[IX]' }, { lvl: Infinity, txt: '§5[X]' },
-], pickDuelLvl = (wins) => formatColor(duelLvlList.find(x => x.lvl >= wins).txt);
+    { lvl: 100, text: '' },
+    { lvl: 120, text: '§7[I]' }, { lvl: 140, text: '§7[II]' }, { lvl: 160, text: '§7[III]' }, { lvl: 180, text: '§7[IV]' }, { lvl: 200, text: '§7[V]' },
+    { lvl: 260, text: '§f[I]' }, { lvl: 320, text: '§f[II]' }, { lvl: 380, text: '§f[III]' }, { lvl: 440, text: '§f[IV]' }, { lvl: 500, text: '§f[V]' },
+    { lvl: 600, text: '§6[I]' }, { lvl: 700, text: '§6[II]' }, { lvl: 800, text: '§6[III]' }, { lvl: 900, text: '§6[IV]' }, { lvl: 1000, text: '§6[V]' },
+    { lvl: 1200, text: '§3[I]' }, { lvl: 1400, text: '§3[II]' }, { lvl: 1600, text: '§3[III]' }, { lvl: 1800, text: '§3[IV]' }, { lvl: 2000, text: '§3[V]' },
+    { lvl: 2400, text: '§2[I]' }, { lvl: 2800, text: '§2[II]' }, { lvl: 3200, text: '§2[III]' }, { lvl: 3600, text: '§2[IV]' }, { lvl: 4000, text: '§2[V]' },
+    { lvl: 5200, text: '§4[I]' }, { lvl: 6400, text: '§4[II]' }, { lvl: 7600, text: '§4[III]' }, { lvl: 8800, text: '§4[IV]' }, { lvl: 10000, text: '§4[V]' },
+    { lvl: 12000, text: '§e[I]' }, { lvl: 14000, text: '§e[II]' }, { lvl: 16000, text: '§e[III]' }, { lvl: 18000, text: '§e[IV]' }, { lvl: 20000, text: '§e[V]' },
+    { lvl: 24000, text: '§5[I]' }, { lvl: 28000, text: '§5[II]' }, { lvl: 32000, text: '§5[III]' }, { lvl: 36000, text: '§5[IV]' }, { lvl: 40000, text: '§5[V]' },
+    { lvl: 44000, text: '§5[VI]' }, { lvl: 48000, text: '§5[VII]' }, { lvl: 52000, text: '§5[VII]' }, { lvl: 56000, text: '§5[IX]' }, { lvl: Infinity, text: '§5[X]' },
+], pickDuelLvl = (wins) => formatColor(duelLvlList.find(x => x.lvl >= wins).text);
 
 const bwLvlProvider = [
     (lvl) => `§7[${lvl}✪]`,
