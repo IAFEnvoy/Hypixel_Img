@@ -6,6 +6,7 @@ const { formatColor } = require('./util');
 const request = require('request');
 const fs = require('fs');
 const url = require('url');
+const Fastify = require('fastify');
 
 const log = (text) => console.log(`[${new Date().toLocaleString()}] ${text}`);
 const sleep = (time) => new Promise(resolve => setTimeout(() => resolve(), time));
@@ -36,73 +37,107 @@ const buildImg = async (name, type) => {
     await page.evaluate((nameFormat, uuid, data, levelProgress) => {
         document.body.innerHTML = document.body.innerHTML.replace('${nameFormat}', nameFormat).replace('${uuid}', uuid).replace('${levelProgress}', levelProgress);
         document.body.innerHTML = data.reduce((p, c, i) => p.replace(`\${data[${i}]}`, c), document.body.innerHTML);
-    }, formatColor(hypixel.formatName(name)), await hypixel.getPlayerUuid(name), hypixel.getMiniData(name, type), hypixel.getLevelProgress(name,type));
+    }, formatColor(hypixel.formatName(name)), await hypixel.getPlayerUuid(name), hypixel.getMiniData(name, type), hypixel.getLevelProgress(name, type));
     // await sleep(1000);
     let renderdoneHandle = await page.waitForFunction('loaded==true', {
         polling: 120
     });
     const renderdone = await renderdoneHandle.jsonValue();
-    if (typeof renderdone == 'object') 
+    if (typeof renderdone == 'object')
         console.log(`加载页面失败：报表${renderdone.componentId}出错 -- ${renderdone.message}`);
     // Take a screenshot
     log(`Saving player ${name} ${type} image`);
+    if (!fs.existsSync('./src/temp')) fs.mkdirSync('./src/temp');
     await page.screenshot({ path: `./src/temp/${name}@${type}.png`, type: 'png' });
     await page.close();
     delete page;
     log(`Complete player ${name} ${type} image generate`);
 }
 
+const fastify = Fastify({});
 
-const server = http.createServer(async (req, res) => {
-    if (request.url == '/favicon.ico') return;
+fastify.get('/', (req, res) => {
     log(`${req.socket.remoteAddress}:${req.socket.remotePort}-> GET ${req.url}`);
-    let data = url.parse(req.url, true);
-    let path = data.pathname;
-    let params = data.query;
-    let name = params.name;
-    if (path == '/') {
-        res.writeHead(200, { 'Content-Type': 'text/plain' });
-        res.end(`200 OK`);
-        return;
-    }
-    if (name == null) {
-        res.writeHead(400, { 'Content-Type': 'text/plain' });
-        res.end('Missing field');
-        return;
-    }
-    if (path == '/hyp') {
-        let r = await buildImg(name, 'hyp');
-        if (r != null) {
-            res.writeHead(404, { 'Content-Type': 'text/plain' });
-            res.end(r);
-        } else {
-            res.writeHead(200, { 'Content-Type': 'text/plain' });
-            res.end(`${__dirname}/temp/${name}@hyp.png`);
-        }
-    }
-    if (path == '/bw') {
-        let r = await buildImg(name, 'bw');
-        if (r != null) {
-            res.writeHead(404, { 'Content-Type': 'text/plain' });
-            res.end(r);
-        } else {
-            res.writeHead(200, { 'Content-Type': 'text/plain' });
-            res.end(`${__dirname}/temp/${name}@bw.png`);
-        }
-    }
-    if (path == '/sw') {
-        let r = await buildImg(name, 'sw');
-        if (r != null) {
-            res.writeHead(404, { 'Content-Type': 'text/plain' });
-            res.end(r);
-        } else {
-            res.writeHead(200, { 'Content-Type': 'text/plain' });
-            res.end(`${__dirname}/temp/${name}@sw.png`);
-        }
-    }
+    res.type('text/plain').code(200);
+    res.send('200 OK');
 });
 
-server.on('listening', () => log(`Server running on 127.0.0.1:${port}`));
-server.listen(port);
+Object.keys(hypixel.getGameType()).forEach(x => fastify.get(`/${x}`, async (req, res) => {
+    log(`${req.socket.remoteAddress}:${req.socket.remotePort}-> GET ${req.url}`);
+    let data = url.parse(req.url, true);
+    let name = data.query.name;
+    res.type('text/plain');
+    if (name == null) {
+        res.code(400);
+        return 'Missing Field';
+    }
+    let r = await buildImg(name, x);
+    if (r != null) {
+        res.code(404);
+        return r;
+    }
+    res.code(200);
+    return `${__dirname}/temp/${name}@${x}.png`;
+}));
+
+fastify.listen({ port: port }, (err, address) => {
+    if (err) {
+        log(err);
+        process.exit(1);
+    }
+    log(`Server running on ${address}`);
+})
+
+// const server = http.createServer(async (req, res) => {
+//     if (request.url == '/favicon.ico') return;
+//     log(`${req.socket.remoteAddress}:${req.socket.remotePort}-> GET ${req.url}`);
+//     let data = url.parse(req.url, true);
+//     let path = data.pathname;
+//     let params = data.query;
+//     let name = params.name;
+//     if (path == '/') {
+//         res.writeHead(200, { 'Content-Type': 'text/plain' });
+//         res.end(`200 OK`);
+//         return;
+//     }
+//     if (name == null) {
+//         res.writeHead(400, { 'Content-Type': 'text/plain' });
+//         res.end('Missing field');
+//         return;
+//     }
+//     if (path == '/hyp') {
+//         let r = await buildImg(name, 'hyp');
+//         if (r != null) {
+//             res.writeHead(404, { 'Content-Type': 'text/plain' });
+//             res.end(r);
+//         } else {
+//             res.writeHead(200, { 'Content-Type': 'text/plain' });
+//             res.end(`${__dirname}/temp/${name}@hyp.png`);
+//         }
+//     }
+//     if (path == '/bw') {
+//         let r = await buildImg(name, 'bw');
+//         if (r != null) {
+//             res.writeHead(404, { 'Content-Type': 'text/plain' });
+//             res.end(r);
+//         } else {
+//             res.writeHead(200, { 'Content-Type': 'text/plain' });
+//             res.end(`${__dirname}/temp/${name}@bw.png`);
+//         }
+//     }
+//     if (path == '/sw') {
+//         let r = await buildImg(name, 'sw');
+//         if (r != null) {
+//             res.writeHead(404, { 'Content-Type': 'text/plain' });
+//             res.end(r);
+//         } else {
+//             res.writeHead(200, { 'Content-Type': 'text/plain' });
+//             res.end(`${__dirname}/temp/${name}@sw.png`);
+//         }
+//     }
+// });
+
+// server.on('listening', () => log(`Server running on 127.0.0.1:${port}`));
+// server.listen(port);
 
 log(`Starting Hypixel img backend server`);

@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "fastify": "^4.14.1",
     "puppeteer": "^19.7.2",
     "request": "^2.88.2"
   }

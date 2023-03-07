@@ -243,6 +243,13 @@ class Hypixel {
             return document.getElementById('status').innerHTML = b.cause;
         return getStatus[config.get('lang')](b.session);
     }
+    getGameType = () => gameType;
+}
+
+const gameType = {
+    'hyp': [],
+    'bw': [],
+    'sw': []
 }
 
 const getGuildLevel = (exp) => {
