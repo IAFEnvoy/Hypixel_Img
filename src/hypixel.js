@@ -158,13 +158,13 @@ class Hypixel {
                 formatDateTime(api.firstLogin), formatDateTime(api.lastLogin) ?? '玩家阻止获取', formatDateTime(api.lastLogout) ?? '玩家阻止获取',
                 formatNameString(api.mostRecentGameType ?? 'none')];
         if (type == 'bw')
-            return [formatBwLevel(api.achievements?.bedwars_level ?? 1), bedwar.winstreak ?? '玩家阻止获取', bedwar.coins ?? 0,
-            bedwar.wins_bedwars ?? 0, ((bedwar.wins_bedwars ?? 0) / (bedwar.losses_bedwars ?? 0)).toFixed(2), bedwar.losses_bedwars ?? 0,
-            bedwar.kills_bedwars ?? 0, ((bedwar.kills_bedwars ?? 0) / (bedwar.deaths_bedwars ?? 0)).toFixed(2), bedwar.deaths_bedwars ?? 0,
-            bedwar.final_kills_bedwars ?? 0, ((bedwar.final_kills_bedwars ?? 0) / (bedwar.final_deaths_bedwars ?? 0)).toFixed(2), bedwar.final_deaths_bedwars ?? 0,
-            bedwar.beds_broken_bedwars ?? 0, ((bedwar.beds_broken_bedwars ?? 0) / (bedwar.beds_lost_bedwars ?? 0)).toFixed(2), bedwar.beds_lost_bedwars ?? 0,
-            bedwar.iron_resources_collected_bedwars ?? 0, bedwar.gold_resources_collected_bedwars ?? 0,
-            bedwar.diamond_resources_collected_bedwars ?? 0, bedwar.emerald_resources_collected_bedwars ?? 0];
+            return [formatBwLevel(api.achievements?.bedwars_level ?? 1), bedwar?.[`${sub}winstreak`] ?? '玩家阻止获取', bedwar.coins ?? 0,
+            bedwar?.[`${sub}wins_bedwars`] ?? 0, ((bedwar?.[`${sub}wins_bedwars`] ?? 0) / (bedwar?.[`${sub}losses_bedwars`] ?? 0)).toFixed(2), bedwar?.[`${sub}losses_bedwars`] ?? 0,
+            bedwar?.[`${sub}kills_bedwars`] ?? 0, ((bedwar?.[`${sub}kills_bedwars`] ?? 0) / (bedwar?.[`${sub}deaths_bedwars`] ?? 0)).toFixed(2), bedwar?.[`${sub}deaths_bedwars`] ?? 0,
+            bedwar?.[`${sub}final_kills_bedwars`] ?? 0, ((bedwar?.[`${sub}final_kills_bedwars`] ?? 0) / (bedwar?.[`${sub}final_deaths_bedwars`] ?? 0)).toFixed(2), bedwar?.[`${sub}final_deaths_bedwars`] ?? 0,
+            bedwar?.[`${sub}beds_broken_bedwars`] ?? 0, ((bedwar?.[`${sub}beds_broken_bedwars`] ?? 0) / (bedwar?.[`${sub}beds_lost_bedwars`] ?? 0)).toFixed(2), bedwar?.[`${sub}beds_lost_bedwars`] ?? 0,
+            bedwar?.[`${sub}iron_resources_collected_bedwars`] ?? 0, bedwar?.[`${sub}gold_resources_collected_bedwars`] ?? 0,
+            bedwar?.[`${sub}diamond_resources_collected_bedwars`] ?? 0, bedwar?.[`${sub}emerald_resources_collected_bedwars`] ?? 0];
         if (type == 'sw')
             return [formatColor(skywar.levelFormatted ?? '§71⋆'), skywar.coins ?? 0, skywar.cosmetic_tokens ?? 0,
             skywar.wins ?? 0, ((skywar.wins ?? 0) / (skywar.losses ?? 0)).toFixed(2), skywar.losses ?? 0,
@@ -247,9 +247,15 @@ class Hypixel {
 }
 
 const gameType = {
-    'hyp': [],
-    'bw': [],
-    'sw': []
+    'hyp': {},
+    'bw': {
+        '4v4': 'two_four_',
+        '4v4v4v4': 'four_four_',
+        '3v3v3v3': 'four_three_',
+        'double': 'eight_two_',
+        'solo': 'eight_one_'
+    },
+    'sw': {}
 }
 
 const getGuildLevel = (exp) => {
