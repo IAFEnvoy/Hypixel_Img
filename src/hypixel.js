@@ -156,7 +156,7 @@ class Hypixel {
                 api.achievementPoints ?? 0, achievements.general_quest_master ?? 0, achievements.general_challenger ?? 0,
                 formatNameString(api.userLanguage ?? 'ENGLISH'), formatColor(formatColorFromString(this.data[name]?.guild?.tagColor ?? 'gray') + this.data[name]?.guild?.name ?? '无公会'),
                 formatDateTime(api.firstLogin), formatDateTime(api.lastLogin) ?? '玩家阻止获取', formatDateTime(api.lastLogout) ?? '玩家阻止获取',
-                formatNameString(api.mostRecentGameType ?? 'none')];
+                formatNameString(api.mostRecentGameType ?? '玩家阻止获取或无数据'), api.achievements?.general_wins ?? 0, api.achievements?.general_coins ?? 0, api.tourney?.total_tributes ?? 0];
         if (type == 'bw')
             return [formatBwLevel(api.achievements?.bedwars_level ?? 1), bedwar?.[`${sub}winstreak`] ?? '玩家阻止获取', bedwar.coins ?? 0,
             bedwar?.[`${sub}wins_bedwars`] ?? 0, ((bedwar?.[`${sub}wins_bedwars`] ?? 0) / (bedwar?.[`${sub}losses_bedwars`] ?? 0)).toFixed(2), bedwar?.[`${sub}losses_bedwars`] ?? 0,
@@ -167,10 +167,10 @@ class Hypixel {
             bedwar?.[`${sub}diamond_resources_collected_bedwars`] ?? 0, bedwar?.[`${sub}emerald_resources_collected_bedwars`] ?? 0];
         if (type == 'sw')
             return [formatColor(skywar.levelFormatted ?? '§71⋆'), skywar.coins ?? 0, skywar.cosmetic_tokens ?? 0,
-            skywar.wins ?? 0, ((skywar.wins ?? 0) / (skywar.losses ?? 0)).toFixed(2), skywar.losses ?? 0,
-            skywar.kills ?? 0, ((skywar.kills ?? 0) / (skywar.deaths ?? 0)).toFixed(2), skywar.deaths ?? 0,
-            skywar.souls ?? 0, skywar.heads ?? 0, skywar.assists ?? 0,
-            skywar.opals ?? 0, formatTime(skywar.time_played), skywar.shard ?? 0];
+            skywar?.[`wins${sub}`] ?? 0, ((skywar?.[`wins${sub}`] ?? 0) / (skywar?.[`losses${sub}`] ?? 0)).toFixed(2), skywar?.[`losses${sub}`] ?? 0,
+            skywar?.[`kills${sub}`] ?? 0, ((skywar?.[`kills${sub}`] ?? 0) / (skywar?.[`deaths${sub}`] ?? 0)).toFixed(2), skywar?.[`deaths${sub}`] ?? 0,
+            skywar.souls ?? 0, skywar?.[`heads${sub}`] ?? 0, skywar?.[`assists${sub}`] ?? 0,
+            skywar.opals ?? 0, formatTime(skywar?.[`time_played${sub}`]), skywar.shard ?? 0];
     }
     getLevelProgress = (name, type) => {
         let api = this.data[name]?.player ?? {};
@@ -249,13 +249,21 @@ class Hypixel {
 const gameType = {
     'hyp': {},
     'bw': {
-        '4v4': 'two_four_',
-        '4v4v4v4': 'four_four_',
-        '3v3v3v3': 'four_three_',
-        'double': 'eight_two_',
-        'solo': 'eight_one_'
+        '4v4': { key: 'two_four_', display: '4v4' },
+        '4v4v4v4': { key: 'four_four_', display: '4v4v4v4' },
+        '3v3v3v3': { key: 'four_three_', display: '3v3v3v3' },
+        'double': { key: 'eight_two_', display: '双人' },
+        'solo': { key: 'eight_one_', display: '单挑' }
     },
-    'sw': {}
+    'sw': {
+        'solo': { key: '_solo', display: '单人' },
+        'solo_normal': { key: '_solo_normal', display: '单人普通' },
+        'solo_insane': { key: '_solo_insane', display: '单人疯狂' },
+        'team': { key: '_team', display: '团队' },
+        'team_normal': { key: '_team_normal', display: '团队普通' },
+        'team_insane': { key: '_team_insane', display: '团队疯狂' },
+        'lab': { key: '_lab', display: '实验室' }
+    }
 }
 
 const getGuildLevel = (exp) => {

@@ -26,7 +26,7 @@ let browser = null;
 const buildImg = async (name, type, mode) => {
     let sub = null;
     if (mode == null) sub = '';
-    else sub = hypixel.getGameType()[type][mode];
+    else sub = hypixel.getGameType()[type][mode]?.key ?? null;
     if (sub == null) return { success: false, reason: 'Unknown sub game mode' };
 
     log(`Fetching player ${name} ${type} ${mode} data`);
@@ -42,7 +42,7 @@ const buildImg = async (name, type, mode) => {
         document.body.innerHTML = document.body.innerHTML.replace('${nameFormat}', nameFormat).replace('${uuid}', uuid).replace('${levelProgress}', levelProgress);
         if (sub != null) document.body.innerHTML = document.body.innerHTML.replace('全局', sub);
         document.body.innerHTML = data.reduce((p, c, i) => p.replace(`\${data[${i}]}`, c), document.body.innerHTML);
-    }, formatColor(hypixel.formatName(name)), await hypixel.getPlayerUuid(name), hypixel.getMiniData(name, type, sub), hypixel.getLevelProgress(name, type), mode);
+    }, formatColor(hypixel.formatName(name)), await hypixel.getPlayerUuid(name), hypixel.getMiniData(name, type, sub), hypixel.getLevelProgress(name, type), hypixel.getGameType()[type][mode]?.display ?? null);
     let renderdoneHandle = await page.waitForFunction('loaded==true', {
         polling: 120
     });
@@ -81,15 +81,15 @@ Object.keys(hypixel.getGameType()).forEach(x => fastify.get(`/${x}`, async (req,
     res.type('application/json');
     if (name == null) {
         res.code(400);
-        return {statusCode:400,reason:'Missing Field'};
+        return { statusCode: 400, reason: 'Missing Field' };
     }
     let r = await buildImg(name, x, mode);
     if (r.success == false) {
         res.code(400);
-        return {statusCode:406,reason:r.reason};
+        return { statusCode: 406, reason: r.reason };
     }
     res.code(200);
-    return {statusCode:200,data:r.path};
+    return { statusCode: 200, data: r.path };
 }));
 
 fastify.listen({ port: port }, (err, address) => {
