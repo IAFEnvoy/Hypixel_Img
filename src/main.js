@@ -38,17 +38,17 @@ const buildImg = async (name, type, mode) => {
     const page = await browser.newPage();
     await page.goto(`file://${__dirname}/template/${type}.html`);
     // Add a style tag to the page
-    await page.evaluate((nameFormat, uuid, data, levelProgress, sub) => {
-        document.body.innerHTML = document.body.innerHTML.replace('${nameFormat}', nameFormat).replace('${uuid}', uuid).replace('${levelProgress}', levelProgress);
+    await page.evaluate((nameFormat, uuid, data, sub) => {
+        document.body.innerHTML = document.body.innerHTML.replace('${nameFormat}', nameFormat).replace('${uuid}', uuid);
         if (sub != null) document.body.innerHTML = document.body.innerHTML.replace('全局', sub);
         document.body.innerHTML = data.reduce((p, c, i) => p.replace(`\${data[${i}]}`, c), document.body.innerHTML);
-    }, formatColor(hypixel.formatName(name)), await hypixel.getPlayerUuid(name), hypixel.getMiniData(name, type, sub), hypixel.getLevelProgress(name, type), hypixel.getGameType()[type][mode]?.display ?? null);
+    }, formatColor(hypixel.formatName(name)), await hypixel.getPlayerUuid(name), hypixel.getMiniData(name, type, sub), hypixel.getGameType()[type][mode]?.display ?? null);
     let renderdoneHandle = await page.waitForFunction('loaded==true', {
         polling: 120
     });
     const renderdone = await renderdoneHandle.jsonValue();
     if (typeof renderdone == 'object')
-        console.log(`加载页面失败：报表${renderdone.componentId}出错 -- ${renderdone.message}`);
+        console.log(`Failed to load ${renderdone.componentId} : ${renderdone.message}`);
     // Take a screenshot
     log(`Saving player ${name} ${type} ${mode} image`);
     if (!fs.existsSync('./src/temp')) fs.mkdirSync('./src/temp');

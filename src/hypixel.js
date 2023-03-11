@@ -154,11 +154,11 @@ class Hypixel {
         if (type == 'hyp')
             return [lvl, api.karma ?? 0, api?.giftingMeta?.ranksGiven ?? 0,
                 api.achievementPoints ?? 0, achievements.general_quest_master ?? 0, achievements.general_challenger ?? 0,
-                formatNameString(api.userLanguage ?? 'ENGLISH'), formatColor(formatColorFromString(this.data[name]?.guild?.tagColor ?? 'gray') + this.data[name]?.guild?.name ?? '无公会'),
+                formatNameString(api.userLanguage ?? 'ENGLISH'), formatColor(formatColorFromString(this.data[name]?.guild?.tagColor ?? 'gray') + (this.data[name]?.guild?.name ?? '无公会')),
                 formatDateTime(api.firstLogin), formatDateTime(api.lastLogin) ?? '玩家阻止获取', formatDateTime(api.lastLogout) ?? '玩家阻止获取',
                 formatNameString(api.mostRecentGameType ?? '玩家阻止获取或无数据'), api.achievements?.general_wins ?? 0, api.achievements?.general_coins ?? 0, api.tourney?.total_tributes ?? 0];
         if (type == 'bw')
-            return [formatBwLevel(api.achievements?.bedwars_level ?? 1), bedwar?.[`${sub}winstreak`] ?? '玩家阻止获取', bedwar.coins ?? 0,
+            return [`${formatBwLevel(api.achievements?.bedwars_level ?? 1)}(${getProgress.bw(api?.stats?.Bedwars?.Experience ?? 0)})`, bedwar?.[`${sub}winstreak`] ?? '玩家阻止获取', bedwar.coins ?? 0,
             bedwar?.[`${sub}wins_bedwars`] ?? 0, ((bedwar?.[`${sub}wins_bedwars`] ?? 0) / (bedwar?.[`${sub}losses_bedwars`] ?? 0)).toFixed(2), bedwar?.[`${sub}losses_bedwars`] ?? 0,
             bedwar?.[`${sub}kills_bedwars`] ?? 0, ((bedwar?.[`${sub}kills_bedwars`] ?? 0) / (bedwar?.[`${sub}deaths_bedwars`] ?? 0)).toFixed(2), bedwar?.[`${sub}deaths_bedwars`] ?? 0,
             bedwar?.[`${sub}final_kills_bedwars`] ?? 0, ((bedwar?.[`${sub}final_kills_bedwars`] ?? 0) / (bedwar?.[`${sub}final_deaths_bedwars`] ?? 0)).toFixed(2), bedwar?.[`${sub}final_deaths_bedwars`] ?? 0,
@@ -166,73 +166,11 @@ class Hypixel {
             bedwar?.[`${sub}iron_resources_collected_bedwars`] ?? 0, bedwar?.[`${sub}gold_resources_collected_bedwars`] ?? 0,
             bedwar?.[`${sub}diamond_resources_collected_bedwars`] ?? 0, bedwar?.[`${sub}emerald_resources_collected_bedwars`] ?? 0];
         if (type == 'sw')
-            return [formatColor(skywar.levelFormatted ?? '§71⋆'), skywar.coins ?? 0, skywar.cosmetic_tokens ?? 0,
+            return [`${formatColor(skywar.levelFormatted ?? '§71⋆')}(${getProgress.sw(api?.stats?.SkyWars?.skywars_experience ?? 0)})`, skywar.opals ?? 0,
             skywar?.[`wins${sub}`] ?? 0, ((skywar?.[`wins${sub}`] ?? 0) / (skywar?.[`losses${sub}`] ?? 0)).toFixed(2), skywar?.[`losses${sub}`] ?? 0,
             skywar?.[`kills${sub}`] ?? 0, ((skywar?.[`kills${sub}`] ?? 0) / (skywar?.[`deaths${sub}`] ?? 0)).toFixed(2), skywar?.[`deaths${sub}`] ?? 0,
             skywar.souls ?? 0, skywar?.[`heads${sub}`] ?? 0, skywar?.[`assists${sub}`] ?? 0,
-            skywar.opals ?? 0, formatTime(skywar?.[`time_played${sub}`]), skywar.shard ?? 0];
-    }
-    getLevelProgress = (name, type) => {
-        let api = this.data[name]?.player ?? {};
-        if (type == 'hyp') {
-            let lvl = this.getLevel(api?.networkExp ?? 0);
-            let now = Math.floor(lvl);
-            let block = Math.floor((lvl - now) * 10);
-            return `<span class="progress">${now}</span><br>
-            <span class="progress" style="color:aqua;">${Array.from({ length: block }).reduce(p => p + '▉', '')}</span>
-            <span class="progress" style="color:grey">${Array.from({ length: 10 - block }).reduce(p => p + '▉', '')}</span>`;
-        }
-        if (type == 'bw') {
-            let exp = api?.stats?.Bedwars?.Experience ?? 0;
-            let lvl = api?.achievements?.bedwars_level ?? 1;
-            exp %= 487000;
-            let max, block;
-            let remains = [{ val: 500, text: '500' }, { val: 1000, text: '1k' }, { val: 2000, text: '2k' }, { val: 3500, text: '3.5k' }].reduce((p, c) => {
-                if (p == null) return null;
-                if (p < c.val) {
-                    max = c.text;
-                    block = Math.floor(exp * 10 / c.val);
-                    exp = p;
-                    return null;
-                }
-                return p - c.val;
-            }, exp);
-            if (remains != null) {
-                max = '5k';
-                remains %= 5000;
-                block = Math.floor(remains / 500);
-                exp = remains;
-            }
-            return `<span class="progress">${formatBwLevel(lvl)} ${exp}/${max}</span><br>
-            <span class="progress" style="color:aqua;">${Array.from({ length: block }).reduce(p => p + '▉', '')}</span>
-            <span class="progress" style="color:grey">${Array.from({ length: 10 - block }).reduce(p => p + '▉', '')}</span>`;
-        }
-        if (type == 'sw') {
-            let exp = Math.round(api?.stats?.SkyWars?.skywars_experience ?? 0);
-            let max, block, lvl;
-            let remains = [{ val: 20, text: '20' }, { val: 50, text: '50' }, { val: 80, text: '80' }, { val: 100, text: '100' },
-            { val: 250, text: '250' }, { val: 500, text: '500' }, { val: 1000, text: '1k' }, { val: 1500, text: '1.5k' },
-            { val: 2500, text: '2.5k' }, { val: 4000, text: '4k' }, { val: 5000, text: '5k' }].reduce((p, c, i) => {
-                if (p == null) return null;
-                if (p < c.val) {
-                    max = c.text;
-                    block = Math.floor(exp * 10 / c.val);
-                    lvl = i;
-                    exp = p;
-                    return null;
-                }
-                return p - c.val;
-            }, exp);
-            if (remains != null) {
-                max = '10k';
-                lvl = Math.floor(12 + remains / 10000);
-                remains %= 10000;
-                block = Math.floor(remains / 1000);
-            } else remains = exp;
-            return `<span class="progress">${formatColor(api?.stats?.SkyWars?.levelFormatted ?? '§71⋆')} ${remains}/${max}</span><br>
-            <span class="progress" style="color:aqua;">${Array.from({ length: block }).reduce(p => p + '▉', '')}</span>
-            <span class="progress" style="color:grey">${Array.from({ length: 10 - block }).reduce(p => p + '▉', '')}</span>`;
-        }
+            skywar.coins ?? 0, skywar.cosmetic_tokens ?? 0, skywar.shard ?? 0];
     }
     getGuild = (name) => getGuild[config.get('lang')](this.data[name].guild, this.uuids[name]);
     getStatus = async (name) => {
@@ -244,6 +182,53 @@ class Hypixel {
         return getStatus[config.get('lang')](b.session);
     }
     getGameType = () => gameType;
+}
+const getProgress = {
+    'bw': exp => {
+        exp %= 487000;
+        let max, block;
+        let remains = [{ val: 500, text: '500' }, { val: 1000, text: '1k' }, { val: 2000, text: '2k' }, { val: 3500, text: '3.5k' }].reduce((p, c) => {
+            if (p == null) return null;
+            if (p < c.val) {
+                max = c.text;
+                block = Math.floor(exp * 10 / c.val);
+                exp = p;
+                return null;
+            }
+            return p - c.val;
+        }, exp);
+        if (remains != null) {
+            max = '5k';
+            remains %= 5000;
+            block = Math.floor(remains / 500);
+            exp = remains;
+        }
+        return `${exp}/${max}`;
+    },
+    'sw': exp => {
+        exp = Math.round(exp);
+        let max, block, lvl;
+        let remains = [{ val: 20, text: '20' }, { val: 50, text: '50' }, { val: 80, text: '80' }, { val: 100, text: '100' },
+        { val: 250, text: '250' }, { val: 500, text: '500' }, { val: 1000, text: '1k' }, { val: 1500, text: '1.5k' },
+        { val: 2500, text: '2.5k' }, { val: 4000, text: '4k' }, { val: 5000, text: '5k' }].reduce((p, c, i) => {
+            if (p == null) return null;
+            if (p < c.val) {
+                max = c.text;
+                block = Math.floor(exp * 10 / c.val);
+                lvl = i;
+                exp = p;
+                return null;
+            }
+            return p - c.val;
+        }, exp);
+        if (remains != null) {
+            max = '10k';
+            lvl = Math.floor(12 + remains / 10000);
+            remains %= 10000;
+            block = Math.floor(remains / 1000);
+        } else remains = exp;
+        return `${remains}/${max}`;
+    }
 }
 
 const gameType = {
