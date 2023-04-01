@@ -37,7 +37,6 @@ const buildImg = async (name, type, mode) => {
     log(`Rendering player ${name} ${type} ${mode} image`);
     const page = await browser.newPage();
     await page.goto(`file://${__dirname}/template/${type}.html`);
-    // Add a style tag to the page
     await page.evaluate((nameFormat, uuid, data, sub) => {
         document.body.innerHTML = document.body.innerHTML.replace('${nameFormat}', nameFormat).replace('${uuid}', uuid);
         if (sub != null) document.body.innerHTML = document.body.innerHTML.replace('全局', sub);

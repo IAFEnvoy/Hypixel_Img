@@ -110,6 +110,7 @@ class Hypixel {
             return `${formatColorFromString(guildJson.tagColor)}[${guildJson.tag}]`;
         return ``;
     }
+    getHousingPlus = (name) => this.data[name]?.player?.housingMeta?.plotSize ?? '' == 'MASSIVE' ? '§6+§7' : '';
     formatName = (name) => `${this.getRank(name)}${this.data[name].player.displayname}${this.getGuildTag(name)}`;
     getLevel = (exp) => exp < 0 ? 1 : (1 - 3.5 + Math.sqrt(12.25 + 0.0008 * (exp ?? 0))).toFixed(2);
     getTag = (name) => {
@@ -151,6 +152,8 @@ class Hypixel {
         let achievements = api.achievements ?? {};
         let bedwar = api.stats?.Bedwars ?? {};
         let skywar = api.stats?.SkyWars ?? {};
+        let mm = api.stats?.MurderMystery ?? {};
+        let duel = api.stats?.Duels ?? {};
         if (type == 'hyp')
             return [lvl, api.karma ?? 0, api?.giftingMeta?.ranksGiven ?? 0,
                 api.achievementPoints ?? 0, achievements.general_quest_master ?? 0, achievements.general_challenger ?? 0,
@@ -171,6 +174,20 @@ class Hypixel {
             skywar?.[`kills${sub}`] ?? 0, ((skywar?.[`kills${sub}`] ?? 0) / (skywar?.[`deaths${sub}`] ?? 0)).toFixed(2), skywar?.[`deaths${sub}`] ?? 0,
             skywar.souls ?? 0, skywar?.[`heads${sub}`] ?? 0, skywar?.[`assists${sub}`] ?? 0,
             skywar.coins ?? 0, skywar.cosmetic_tokens ?? 0, skywar.shard ?? 0];
+        if (type == 'mm')
+            return [mm.coins ?? 0, mm.coins_pickedup ?? 0,
+            mm.wins ?? 0, (100 * (mm?.[`wins${sub}`] ?? 0) / (mm?.[`games${sub}`] ?? 0)).toFixed(2), (mm?.[`games${sub}`] ?? 0) - (mm?.[`wins${sub}`] ?? 0),
+            mm?.[`kills${sub}`] ?? 0, ((mm?.[`kills${sub}`] ?? 0) / (mm?.[`deaths${sub}`] ?? 0)).toFixed(2), mm?.[`deaths${sub}`] ?? 0,
+            mm.kills_as_murderer ?? 0, mm.was_hero ?? 0,
+            mm.kills_as_infected ?? 0, mm.kills_as_survivor ?? 0, mm.longest_time_as_survivor_seconds ?? 0,
+            mm.murderer_chance ?? 0, mm.detective_chance ?? 0, mm.alpha_chance ?? 0];
+        if (type == 'duel')
+            return [pickDuelLvl(duel?.[`${sub}wins`] ?? 0), duel?.[`best_${sub == '' ? 'all_modes_winstreak' : `winstreak_mode_${sub}`}`] ?? '玩家阻止获取', duel?.[`current_${sub == '' ? 'winstreak' : `winstreak_mode_${sub}`}`] ?? '玩家阻止获取',
+            duel?.[`${sub}wins`] ?? 0, ((duel?.[`${sub}wins`] ?? 0) / (duel?.[`${sub}losses`] ?? 0)).toFixed(2), duel?.[`${sub}losses`] ?? 0,
+            duel?.[sub != 'bridge_duel_' ? `${sub}kills` : `${sub}bridge_kills`] ?? 0, ((duel?.[sub != 'bridge_duel_' ? `${sub}kills` : `${sub}bridge_kills`] ?? 0) / (duel?.[sub != 'bridge_duel_' ? `${sub}deaths` : `${sub}bridge_deaths`] ?? 0)).toFixed(2), duel?.[sub != 'bridge_duel_' ? `${sub}deaths` : `${sub}bridge_deaths`] ?? 0,
+            duel?.[`${sub}melee_hits`] ?? 0, duel?.[`${sub}melee_swings`] ?? 0, (100 * (duel?.[`${sub}melee_hits`] ?? 0) / (duel?.[`${sub}melee_swings`] ?? 0)).toFixed(2),
+            duel?.[`${sub}bow_hits`] ?? 0, duel?.[`${sub}bow_shots`] ?? 0, (100 * (duel?.[`${sub}bow_hits`] ?? 0) / (duel?.[`${sub}bow_shots`] ?? 0)).toFixed(2),
+            duel?.coins ?? 0, duel?.[`${sub}damage_dealt`] ?? 0, duel?.[`${sub}health_regenerated`]];
     }
     getGuild = (name) => getGuild[config.get('lang')](this.data[name].guild, this.uuids[name]);
     getStatus = async (name) => {
@@ -248,6 +265,25 @@ const gameType = {
         'team_normal': { key: '_team_normal', display: '团队普通' },
         'team_insane': { key: '_team_insane', display: '团队疯狂' },
         'lab': { key: '_lab', display: '实验室' }
+    },
+    'mm': {
+        'classic': { key: "_MURDER_CLASSIC", display: "经典" },
+        'double': { key: "_MURDER_DOUBLE_UP", display: "双倍" },
+        'assassins': { key: "_MURDER_ASSASSINS", display: "刺客" },
+        'infection': { key: "_MURDER_INFECTION", display: "感染" }
+    },
+    'duel': {
+        'bow': { key: 'bow_duel_', display: '弓箭决斗' },
+        'boxing': { key: 'boxing_duel_', display: '拳击决斗' },
+        'bridge': { key: 'bridge_duel_', display: '战桥决斗' },
+        'classic': { key: 'classic_duel_', display: '经典决斗' },
+        'combo': { key: 'combo_duel_', display: '连击决斗' },
+        'mw': { key: 'mw_duel_', display: '超级战墙决斗' },
+        'op': { key: 'op_duel_', display: 'OP决斗' },
+        'potion': { key: 'potion_duel_', display: '药水决斗' },
+        'sumo': { key: 'sumo_duel_', display: '相扑决斗' },
+        'sw': { key: 'sw_duel_', display: '空岛战争决斗' },
+        'uhc': { key: 'uhc_duel_', display: 'UHC决斗' },
     }
 }
 
@@ -316,7 +352,7 @@ const buildSpan = (list, value, prefix, suffix) => {
 };
 
 const duelLvlList = [
-    { lvl: 100, text: '' },
+    { lvl: 100, text: '§7None' },
     { lvl: 120, text: '§7[I]' }, { lvl: 140, text: '§7[II]' }, { lvl: 160, text: '§7[III]' }, { lvl: 180, text: '§7[IV]' }, { lvl: 200, text: '§7[V]' },
     { lvl: 260, text: '§f[I]' }, { lvl: 320, text: '§f[II]' }, { lvl: 380, text: '§f[III]' }, { lvl: 440, text: '§f[IV]' }, { lvl: 500, text: '§f[V]' },
     { lvl: 600, text: '§6[I]' }, { lvl: 700, text: '§6[II]' }, { lvl: 800, text: '§6[III]' }, { lvl: 900, text: '§6[IV]' }, { lvl: 1000, text: '§6[V]' },

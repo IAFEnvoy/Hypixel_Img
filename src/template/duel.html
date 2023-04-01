@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+
+<head>
+    <style>
+        @font-face {
+            font-family: "Minecraftia";
+            src: url("Minecraftia.ttf");
+        }
+
+        body {
+            background: url("./bg/duel.png");
+            background-size: 100%;
+            background-attachment: fixed;
+        }
+
+        .mode {
+            font-family: Minecraftia;
+            position: absolute;
+            font-weight: bold;
+            display: inline-block;
+            color: white;
+            font-size: 25px;
+        }
+
+        .text {
+            font-family: Minecraftia;
+            position: absolute;
+            font-weight: bold;
+            display: inline-block;
+            text-align: center;
+            width: 200px;
+        }
+
+        .background {
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 15px;
+            position: absolute;
+        }
+
+        .progress {
+            font-family: consolas;
+            font-size: 15px;
+            white-space: pre;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body style="width:900px;height:600px;transform:scale(2,2);transform-origin: top left;">
+    <script>
+        let loaded = false;
+    </script>
+    <div class="background" style="left:10px;top:10px;width:780px;height:50px;"></div>
+    <div
+        style="font-size:30px;font-family:Minecraftia;position:absolute;left:30px;top:20px;width:740px;text-align:center;">
+        ${nameFormat}</div>
+
+    <div class="background" style="left:10px;top:70px;width:90px;height:290px;"></div>
+    <img src="./icon/Duels-64.png" style="position:absolute;left:20px;top:80px;height:70px">
+    <div class="mode" style="position:absolute;writing-mode:vertical-rl;left:25px;top:165px;">决斗游戏<br>全局</div>
+
+    <div class="background" style="left:110px;top:70px;width:180px;height:290px;"></div>
+    <img src="https://skins.mcstats.com/body/front/${uuid}" style="position:absolute;left:120px;top:80px;height:270px"
+        onload="loaded=true">
+
+    <div class="background" style="left:10px;top:370px;width:280px;height:70px;"></div>
+    
+
+    <div class="background" style="left:300px;top:70px;width:490px;height:290px;"></div>
+
+    <div class="text" style="font-size:15px;color:orange;left:300px;top:80px;">等级</div>
+    <div class="text" style="font-size:15px;color:orange;left:450px;top:80px;">最佳连胜</div>
+    <div class="text" style="font-size:15px;color:orange;left:600px;top:80px;">当前连胜</div>
+    <div class="text" style="font-size:20px;color:white;left:300px;top:100px;">${data[0]}</div>
+    <div class="text" style="font-size:20px;color:greenyellow;left:450px;top:100px;">${data[1]}</div>
+    <div class="text" style="font-size:20px;color:magenta;left:600px;top:100px;">${data[2]}</div>
+
+    <div class="text" style="font-size:15px;color:orange;left:300px;top:135px;">胜场</div>
+    <div class="text" style="font-size:15px;color:orange;left:450px;top:135px;">W/L</div>
+    <div class="text" style="font-size:15px;color:orange;left:600px;top:135px;">败场</div>
+    <div class="text" style="font-size:20px;color:greenyellow;left:300px;top:155px;">${data[3]}</div>
+    <div class="text" style="font-size:20px;color:yellow;left:450px;top:155px;">${data[4]}</div>
+    <div class="text" style="font-size:20px;color:red;left:600px;top:155px;">${data[5]}</div>
+
+    <div class="text" style="font-size:15px;color:orange;left:300px;top:190px;">击杀</div>
+    <div class="text" style="font-size:15px;color:orange;left:450px;top:190px;">K/D</div>
+    <div class="text" style="font-size:15px;color:orange;left:600px;top:190px;">死亡</div>
+    <div class="text" style="font-size:20px;color:greenyellow;left:300px;top:210px;">${data[6]}</div>
+    <div class="text" style="font-size:20px;color:yellow;left:450px;top:210px;">${data[7]}</div>
+    <div class="text" style="font-size:20px;color:red;left:600px;top:210px;">${data[8]}</div>
+
+    <div class="text" style="font-size:15px;color:orange;left:300px;top:245px;">攻击命中</div>
+    <div class="text" style="font-size:15px;color:orange;left:450px;top:245px;">攻击次数</div>
+    <div class="text" style="font-size:15px;color:orange;left:600px;top:245px;">攻击命中率</div>
+    <div class="text" style="font-size:20px;color:greenyellow;left:300px;top:265px;">${data[9]}</div>
+    <div class="text" style="font-size:20px;color:yellow;left:450px;top:265px;">${data[10]}</div>
+    <div class="text" style="font-size:20px;color:red;left:600px;top:265px;">${data[11]}%</div>
+
+    <div class="text" style="font-size:15px;color:orange;left:300px;top:300px;">弓箭命中</div>
+    <div class="text" style="font-size:15px;color:orange;left:450px;top:300px;">弓箭射击</div>
+    <div class="text" style="font-size:15px;color:orange;left:600px;top:300px;">弓箭命中率</div>
+    <div class="text" style="font-size:20px;color:greenyellow;left:300px;top:320px;">${data[12]}</div>
+    <div class="text" style="font-size:20px;color:yellow;left:450px;top:320px;">${data[13]}</div>
+    <div class="text" style="font-size:20px;color:red;left:600px;top:320px;">${data[14]}%</div>
+
+    <div class="background" style="left:300px;top:370px;width:490px;height:70px;"></div>
+    <div class="text" style="font-size:15px;color:gold;left:300px;top:380px;">硬币</div>
+    <div class="text" style="font-size:15px;color:red;left:450px;top:380px;">造成伤害</div>
+    <div class="text" style="font-size:15px;color:greenyellow;left:600px;top:380px;">回复血量</div>
+    <div class="text" style="font-size:20px;left:300px;top:410px;color:gold">${data[15]}</div>
+    <div class="text" style="font-size:20px;left:450px;top:410px;color:red">${data[16]}</div>
+    <div class="text" style="font-size:20px;left:600px;top:410px;color:greenyellow">${data[17]}</div>
+</body>
